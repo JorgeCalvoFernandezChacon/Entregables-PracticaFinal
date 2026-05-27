@@ -1,0 +1,43 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Jugador" as J
+actor "Sistema" as S
+
+rectangle "Juego de Mazmorras - Sistema Completo" {
+  usecase "Iniciar Partida" as UC1
+  usecase "Cargar Partida" as UC2
+  usecase "Mover Jugador" as UC3
+  usecase "Atacar Enemigo" as UC4
+  usecase "Recoger Objeto" as UC5
+  usecase "Usar Consumible" as UC6
+  usecase "Equipar Equipo" as UC7
+  usecase "Abrir Puerta" as UC8
+  usecase "Guardar Partida" as UC9
+  usecase "Finalizar Turno" as UC10
+  usecase "Gestionar Excepciones" as UC11
+  usecase "Procesar Turnos Enemigos" as UC12
+  usecase "Calcular Camino (BFS)" as UC13
+}
+
+J --> UC1
+J --> UC2
+J --> UC3
+J --> UC4
+J --> UC5
+J --> UC6
+J --> UC7
+J --> UC8
+J --> UC9
+J --> UC10
+
+UC3 <.. UC13 : <<extend>>
+UC10 --> UC12 : <<trigger>>
+UC3 ..> UC11 : <<handle errors>>
+UC4 ..> UC11 : <<handle errors>>
+UC5 ..> UC11 : <<handle errors>>
+
+S --> UC12
+S --> UC11
+@enduml

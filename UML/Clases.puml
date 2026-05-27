@@ -1,0 +1,126 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+package "modelo" {
+  abstract class Entidad {
+    # vida : int
+    # ataque : int
+    # defensa : int
+    # fila : int
+    # columna : int
+    # muerto : boolean
+    + {abstract} actuar(h : Habitacion, j : Jugador) : void
+    + isVivo() : boolean
+  }
+  class Jugador {
+    - velocidad : int
+    - habitacionId : int
+    - habitacion : Habitacion
+    - inventario : Inventario
+    - equipo : Equipable
+    - vidaMaxima : int
+    + getAtaqueTotal() : int
+    + getDefensaTotal() : int
+    + recogerObjeto(o : Objeto) : void
+    + equipar(e : Equipable) : void
+    + curar(c : int) : void
+  }
+  class Enemigo {
+    + actuar(h : Habitacion, j : Jugador) : void
+    - isAdyacente(j : Jugador) : boolean
+    - atacar(j : Jugador) : void
+    - moverseHacia(j : Jugador, h : Habitacion) : void
+  }
+  abstract class Objeto {
+    - nombre : String
+    - descripcion : String
+    + {abstract} usar(j : Jugador) : void
+  }
+  class Consumible {
+    - recuperacionVida : int
+    + usar(j : Jugador) : void
+  }
+  class Equipable {
+    - bonoAtaque : int
+    - bonoDefensa : int
+    + usar(j : Jugador) : void
+  }
+  class Llave {
+    - puertaId : String
+    + usar(j : Jugador) : void
+  }
+  class Puerta {
+    - llaveId : String
+    - habitacionDestinoId : int
+    - abierta : boolean
+    + abrir() : void
+  }
+  class Trampa {
+    - daño : int
+    + usar(j : Jugador) : void
+  }
+  class Habitacion {
+    - filas : int
+    - columnas : int
+    - matriz : Celda[][]
+    + colocarEntidad(e : Entidad, f : int, c : int) : void
+  }
+  class Celda {
+    - entidad : Entidad
+    - objeto : Objeto
+    + isEmpty() : boolean
+  }
+  class Inventario {
+    - objetos : ListaEnlazada<Objeto>
+    - capacidadMaxima : int
+    + añadirObjeto(o : Objeto) : boolean
+    + eliminarObjeto(o : Objeto) : boolean
+  }
+  class Posicion {
+    + fila : int
+    + columna : int
+  }
+}
+
+package "logica" {
+  class GestorTurnos {
+    - turnosRestantes : int
+    + finalizarTurno() : void
+    + procesarEnemigos(h : Habitacion) : void
+    + isDerrotaPorTurnos() : boolean
+  }
+  class MovimientoService {
+    + {static} obtenerCeldasAlcanzables(j : Jugador, h : Habitacion) : ListaEnlazada<Posicion>
+    + {static} moverJugador(j : Jugador, h : Habitacion, d : Posicion) : void
+  }
+  class CombateService {
+    + calcularDaño(atk : Entidad, def : Entidad) : int
+    + ejecutarAtaque(atk : Entidad, def : Entidad) : int
+  }
+  class InteraccionService {
+    + recogerObjeto(j : Jugador, c : Celda) : void
+    + usarObjeto(j : Jugador, o : Objeto) : void
+    + atacarEnemigo(j : Jugador, e : Enemigo) : int
+    + abrirPuerta(j : Jugador, p : Puerta, h : Habitacion, c : Celda, gt : GestorTurnos) : void
+  }
+  class SistemaLog {
+    - {static} instance : SistemaLog
+    - eventos : ListaEnlazada<String>
+    + {static} getInstance() : SistemaLog
+    + registrarEvento(e : String) : void
+  }
+}
+
+Entidad <|-- Jugador
+Entidad <|-- Enemigo
+Objeto <|-- Consumible
+Objeto <|-- Equipable
+Objeto <|-- Llave
+Objeto <|-- Puerta
+Objeto <|-- Trampa
+Habitacion *-- Celda
+Celda o-- Entidad
+Celda o-- Objeto
+Jugador --> Inventario
+Inventario o-- Objeto
+@enduml

@@ -1,0 +1,49 @@
+@startuml
+skinparam ParticipantPadding 20
+skinparam BoxPadding 10
+
+box "Interfaz" #LightBlue
+  participant "MainApp" as UI
+end box
+box "Lógica" #LightGreen
+  participant "MovimientoService" as MS
+  participant "GestorTurnos" as GT
+  participant "CombateService" as CS
+end box
+box "Modelo" #LightYellow
+  participant "Jugador" as J
+  participant "Habitacion" as H
+end box
+
+UI -> MS: moverJugador(j, h, destino)
+activate MS
+
+alt destino ocupado por Enemigo
+    MS -> CS: ejecutarAtaque(j, enemigo)
+    activate CS
+    CS -> CS: calcularDaño()
+    CS -> J: setVida()
+    CS --> MS: daño
+    deactivate CS
+else destino libre
+    MS -> H: colocarEntidad(j, destF, destC)
+    MS -> J: setFila/setColumna(destino)
+end
+
+MS --> UI: ok
+deactivate MS
+
+UI -> GT: finalizarTurno()
+activate GT
+GT -> H: procesarEnemigos()
+activate H
+loop cada celda
+    H -> Enemigo: actuar()
+    activate Enemigo
+    Enemigo -> CS: ejecutarAtaque(enemigo, j)
+    deactivate Enemigo
+end
+deactivate H
+GT --> UI: turnoFinalizado
+deactivate GT
+@enduml

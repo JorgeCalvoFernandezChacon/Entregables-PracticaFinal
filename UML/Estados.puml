@@ -1,0 +1,44 @@
+@startuml
+[*] --> Menu
+
+state Menu {
+  [*] --> Idle
+  Idle --> IniciarPartida : ClickIniciar
+  Idle --> CargarPartida : ClickCargar
+}
+
+Menu --> Exploracion : PartidaIniciada
+
+state Exploracion {
+  [*] --> TurnoJugador
+  
+  state TurnoJugador {
+    [*] --> EsperandoEntrada
+    EsperandoEntrada --> ProcesandoAccion : AccionValidada
+    ProcesandoAccion --> [*] : TurnoFinalizado
+  }
+  
+  TurnoJugador --> Combate : EncontrarEnemigo
+  TurnoJugador --> InventarioAbierto : AbrirInventario
+  TurnoJugador --> GuardarPartida : ClickGuardar
+  TurnoJugador --> TurnoEnemigo : FinalizarTurno
+  
+  state GuardarPartida {
+    [*] --> Guardando
+    Guardando --> TurnoJugador : GuardadoExitoso
+  }
+  
+  state Combate {
+    [*] --> Ataque
+    Ataque --> FinCombate : EnemigoDerrotado
+  }
+  
+  InventarioAbierto --> TurnoJugador : CerrarInventario
+  FinCombate --> TurnoJugador
+  TurnoEnemigo --> TurnoJugador : EnemigosActuaron
+}
+
+Exploracion --> GameOver : Victoria / Muerte / TurnosAgotados
+GameOver --> Menu : ReiniciarPartida
+GameOver --> [*]
+@enduml

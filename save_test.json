@@ -1,0 +1,14 @@
+{
+  "turnosRestantes": 50,
+  "jugador": {
+    "vida": 75,
+    "ataque": 20,
+    "defensa": 10,
+    "velocidad": 2,
+    "habitacionId": 0,
+    "fila": 0,
+    "columna": 0,
+    "inventario": [
+    ]
+  }
+}

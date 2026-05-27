@@ -1,0 +1,51 @@
+@startuml
+start
+:Jugador selecciona acción;
+
+if (¿Qué tipo de acción?) then (Movimiento)
+  :Validar movimiento (rango/obstáculos);
+  if (¿Camino válido?) then (Sí)
+    :Mover Jugador;
+    :Verificar casilla destino (Trampa/Objeto/Puerta);
+    if (¿Trampa?) then (Sí)
+        :Aplicar daño;
+    endif
+  else (No)
+    :Lanzar MovimientoInvalidoException;
+    :Mostrar error UI;
+  endif
+elseif (Inventario)
+  :Mostrar objetos;
+  :Jugador selecciona Objeto;
+  if (¿Consumible?) then (Sí)
+    :Usar Consumible;
+    :Eliminar de Inventario;
+  elseif (¿Equipable?) then (Sí)
+    :Equipar objeto;
+  endif
+elseif (Interacción)
+  if (¿Es Puerta?) then (Sí)
+    if (¿Requiere llave?) then (Sí)
+      if (¿Jugador tiene llave?) then (Sí)
+        :Abrir Puerta;
+      else (No)
+        :Mostrar error: Falta llave;
+      endif
+    else (No)
+      :Abrir Puerta;
+    endif
+  elseif (¿Es Objeto en suelo?) then (Sí)
+    :Recoger Objeto;
+  endif
+elseif (Combate)
+  :Atacar enemigo;
+  if (¿Enemigo derrotado?) then (Sí)
+    :Marcar como muerto;
+  endif
+endif
+
+:GestorTurnos.finalizarTurno();
+:Ejecutar lógica enemigos;
+:Verificar condiciones fin de partida;
+stop
+@enduml
